@@ -10,7 +10,6 @@ class RailsTranslateRoutes
     ActionView::Base,
     ActionMailer::Base,
     ActionDispatch::Routing::UrlFor,
-    ApplicationHelper,
     ActiveSupport::TestCase
   ].freeze
 
@@ -262,6 +261,10 @@ class RailsTranslateRoutes
           end
         end
 
+        #add helper to route helper
+        ApplicationHelper.send :define_method, new_helper_name do |*args|
+          send "#{old_name}_#{locale_suffix(I18n.locale)}_#{suffix}", *args
+        end
         new_helper_name.to_sym
       end
     end
