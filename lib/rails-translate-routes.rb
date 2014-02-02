@@ -9,7 +9,9 @@ class RailsTranslateRoutes
     ActionController::Base,
     ActionView::Base,
     ActionMailer::Base,
-    ActionDispatch::Routing::UrlFor
+    ActionDispatch::Routing::UrlFor,
+    ApplicationHelper,
+    ActiveSupport::TestCase
   ].freeze
 
   # Attributes
