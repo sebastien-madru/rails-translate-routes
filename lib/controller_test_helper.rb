@@ -8,7 +8,6 @@
 #   get :show, :id => 1
 
 class ActionController::TestCase
-
   module Behavior
     def process_with_default_locale(action, parameters = nil, session = nil, flash = nil, http_method = 'GET')
       parameters = { :locale => I18n.default_locale.to_s }.merge(parameters || {} )
@@ -16,4 +15,12 @@ class ActionController::TestCase
     end
     alias_method_chain :process, :default_locale
   end
+end
+
+module ActionDispatch::Assertions::RoutingAssertions
+  def assert_recognizes_with_default_locale(expected_options, path, extras = {}, message=nil)
+    expected_options = { :locale => I18n.default_locale.to_s }.merge(expected_options || {} )
+    assert_recognizes_without_default_locale(expected_options, path, extras, message)
+  end
+  alias_method_chain :assert_recognizes, :default_locale
 end
