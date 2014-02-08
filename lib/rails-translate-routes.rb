@@ -429,3 +429,32 @@ RailsTranslateRoutes::ROUTE_HELPER_CONTAINER.each do |klass|
     end
   end
 end
+
+class ActionController::TestCase
+  module Behavior
+    def process_with_default_locale(action, http_method='GET', args={})
+      args = {:locale => I18n.default_locale.to_s }.merge(args || {} )
+      process_without_default_locale(action, http_method, args)
+    end
+    alias_method_chain :process, :default_locale
+  end
+
+  module ActionDispatch::Assertions::RoutingAssertions
+    def assert_generates_with_default_locale(expected_path, options, defaults={}, extras = {}, message=nil)
+      options = {:locale => I18n.default_locale.to_s}.merge(options || {} ) unless options[:locale]
+      name = ""
+      @routes.routes.each do |route|
+        name = route.name if !route.name.nil? && route.defaults[:controller] == options[:controller] && route.defaults[:action] == options[:action] && route.defaults[:locale] == options[:locale]
+      end
+      options = options.merge(:use_route => name) if name
+      assert_generates_without_default_locale(expected_path, options, defaults, extras, message)
+    end
+    alias_method_chain :assert_generates, :default_locale
+
+    def assert_recognizes_with_default_locale(expected_options, path, extras={}, msg=nil)
+      expected_options = {:locale => I18n.default_locale.to_s }.merge(expected_options || {} )
+      assert_recognizes_without_default_locale(expected_options, path, extras, message)
+    end
+    alias_method_chain :assert_recognizes, :default_locale
+  end
+end
