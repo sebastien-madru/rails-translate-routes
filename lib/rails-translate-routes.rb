@@ -433,7 +433,7 @@ end
 class ActionController::TestCase
   module Behavior
     def process_with_default_locale(action, http_method='GET', args={})
-      args = {:locale => I18n.default_locale.to_s }.merge(args || {} )
+      args = {:locale => I18n.default_locale.to_s }.merge(args || {} ) unless args[:locale]
       process_without_default_locale(action, http_method, args)
     end
     alias_method_chain :process, :default_locale
